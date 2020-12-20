@@ -1,0 +1,32 @@
+CREATE TABLE [catalogo].[CLIENTE]
+(
+[NUMEROCLIENTE] [int] NOT NULL,
+[NOMBRECLIENTE] [varchar] (250) COLLATE Modern_Spanish_CI_AS NOT NULL,
+[DIRECCIONENVIO] [varchar] (250) COLLATE Modern_Spanish_CI_AS NOT NULL,
+[LIMITECREDITO] [float] NOT NULL,
+[DESCUENTO] [float] NOT NULL,
+[CIUDAD] [varchar] (50) COLLATE Modern_Spanish_CI_AS NOT NULL,
+[CODIGOGARANTE] [int] NULL
+) ON [PRIMARY]
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+CREATE TRIGGER [catalogo].[TR_DEUDOR2]
+on [catalogo].[CLIENTE] for insert
+as
+declare @limiteCre float, 
+@codGarante int,
+@numCli int
+select @limiteCre = LIMITECREDITO,
+@codGarante = CODIGOGARANTE,
+@numCli = NUMEROCLIENTE
+from inserted
+update DEUDOR
+set LIMITECREDITO = @limiteCre,
+CODIGOGARANTE=@codGarante
+where NUMEROCLIENTE=@numCli
+GO
+ALTER TABLE [catalogo].[CLIENTE] ADD CONSTRAINT [PK_CLIENTE] PRIMARY KEY CLUSTERED  ([NUMEROCLIENTE]) ON [PRIMARY]
+GO
